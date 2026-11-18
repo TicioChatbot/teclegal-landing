@@ -1,769 +1,1007 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
-  Gavel,
-  Wand2,
-  Headphones,
   ArrowRight,
+  Award,
+  Briefcase,
+  CheckCircle2,
   ChevronDown,
-  Menu,
-  X,
+  Clock,
+  Gavel,
+  Globe,
+  Headphones,
+  HeartHandshake,
+  Lightbulb,
   Mail,
   MapPin,
-  Clock,
-  Sparkles,
-  CheckCircle2,
-  Globe,
-  Briefcase,
+  Menu,
   Scale,
   ShieldCheck,
-  Building2
+  Sparkles,
+  Users,
+  WandSparkles,
+  X
 } from 'lucide-react'
+
+type CaseCategory =
+  | 'Todos'
+  | 'Contratos & LegalTech'
+  | 'Arbitraje & Disputas'
+  | 'Fiduciario & Financiero'
+
+interface CaseStudyItem {
+  id: string
+  category: Exclude<CaseCategory, 'Todos'>
+  entity: string
+  tag: string
+  summary: string
+}
+
+const CASE_STUDIES: CaseStudyItem[] = [
+  {
+    id: 'edb',
+    category: 'Contratos & LegalTech',
+    entity: 'Emirates Development Bank (EDB)',
+    tag: 'Financiamiento Sostenible & IA',
+    summary:
+      'Asesoría jurídica en la estructuración de financiamiento para pymes en proyectos de inteligencia artificial, diseño de instrumentos financieros sostenibles e incorporación de KPIs de sostenibilidad y uso responsable de la IA en los contratos.'
+  },
+  {
+    id: 'mas',
+    category: 'Contratos & LegalTech',
+    entity: 'Autoridad Monetaria de Singapur (MAS)',
+    tag: 'Online Dispute Resolution (ODR)',
+    summary:
+      'Asesoría en la implementación de mecanismos de resolución de disputas en línea (ODR) para la gestión preventiva y ágil de conflictos vinculados con financiamiento sostenible.'
+  },
+  {
+    id: 'katoen',
+    category: 'Contratos & LegalTech',
+    entity: 'Katoen Natie (Bélgica)',
+    tag: 'Soft Landing & Contratación',
+    summary:
+      'Asesoría jurídica integral en el establecimiento de la filial colombiana, así como la revisión y análisis de contratos nacionales e internacionales derivados de su operación en Colombia.'
+  },
+  {
+    id: 'eco1st-nextlevel',
+    category: 'Contratos & LegalTech',
+    entity: 'Eco1st & Next Level Solutions (EE. UU.)',
+    tag: 'Consultoría Permanente',
+    summary:
+      'Consultoría jurídica permanente para el establecimiento y operación continua en Colombia de ambas compañías estadounidenses, incluyendo revisión estratégica de contratos nacionales e internacionales.'
+  },
+  {
+    id: 'tribunal-nali',
+    category: 'Arbitraje & Disputas',
+    entity: 'Tribunal Arbitral Nali S.A.S. vs. Canales Desarrolladores S.A.S.',
+    tag: 'Árbitro de Tribunal',
+    summary:
+      'Actuación como árbitro en controversia de restitución inmobiliaria bajo un contrato de fiducia mercantil, aplicando criterios de rigor contractual y eficiencia procesal.'
+  },
+  {
+    id: 'tribunal-soporte',
+    category: 'Arbitraje & Disputas',
+    entity: 'Soporte Vital & Empresarial S.A.S. vs. Fiduciaria Colpatria S.A.',
+    tag: 'Secretario de Tribunal Arbitral',
+    summary:
+      'Secretario de Tribunal Arbitral en litigio arbitral complejo sobre incumplimiento en promesa de compraventa y determinación de responsabilidad de la entidad fiduciaria.'
+  },
+  {
+    id: 'hoteles-fiducia',
+    category: 'Fiduciario & Financiero',
+    entity: 'Esquemas Fiduciarios Inmobiliarios para Proyectos Hoteleros',
+    tag: 'Estructuración Fiduciaria',
+    summary:
+      'Acompañamiento integral en la estructuración de esquemas fiduciarios orientados a la comercialización de derechos fiduciarios en Colombia, negociación con la sociedad fiduciaria y puesta en marcha contractual.'
+  },
+  {
+    id: 'garantias-bursatil',
+    category: 'Fiduciario & Financiero',
+    entity: 'Garantías Mobiliarias, Infraestructura Bursátil y Litigio Financiero',
+    tag: 'Banca & Mercado de Valores',
+    summary:
+      'Conceptos sobre fiducia en garantía para sistemas de compensación y liquidación de valores y depósitos centralizados, además de representación judicial ante la Superintendencia Financiera en estructuras fiduciarias inmobiliarias.'
+  }
+]
+
+const CASE_FILTERS: CaseCategory[] = [
+  'Todos',
+  'Contratos & LegalTech',
+  'Arbitraje & Disputas',
+  'Fiduciario & Financiero'
+]
+
+/**
+ * Vector SVG emblem matching TecLegal's concentric dot-arc brand mark
+ * (8 outer gold dots #e2c509 + 6 inner magenta/burgundy dots #ac1259)
+ */
+const TecLegalMark: React.FC = () => {
+  const outerDots = [
+    { cx: 34, cy: 10 },
+    { cx: 23, cy: 11.5 },
+    { cx: 14, cy: 17.5 },
+    { cx: 9, cy: 26 },
+    { cx: 9, cy: 36 },
+    { cx: 14, cy: 44.5 },
+    { cx: 23, cy: 50.5 },
+    { cx: 34, cy: 52 }
+  ]
+
+  const innerDots = [
+    { cx: 31, cy: 18 },
+    { cx: 22.5, cy: 21 },
+    { cx: 17.5, cy: 27.5 },
+    { cx: 17.5, cy: 34.5 },
+    { cx: 22.5, cy: 41 },
+    { cx: 31, cy: 44 }
+  ]
+
+  return (
+    <span className="brand-monogram">
+      <svg
+        width="38"
+        height="38"
+        viewBox="0 0 62 62"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+        className="brand-svg-mark"
+      >
+        {outerDots.map((dot, idx) => (
+          <circle key={`outer-${idx}`} cx={dot.cx} cy={dot.cy} r="3.4" fill="#e2c509" />
+        ))}
+        {innerDots.map((dot, idx) => (
+          <circle key={`inner-${idx}`} cx={dot.cx} cy={dot.cy} r="2.6" fill="#ac1259" />
+        ))}
+      </svg>
+      <span className="brand-wordmark">TECLEGAL</span>
+    </span>
+  )
+}
 
 export const App: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [privacyModalOpen, setPrivacyModalOpen] = useState(false)
+  const [activeFilter, setActiveFilter] = useState<CaseCategory>('Todos')
   const [formSubmitted, setFormSubmitted] = useState(false)
-  
   const [formData, setFormData] = useState({
     nombre: '',
     empresa: '',
     correo: '',
-    asunto: 'Comercio Internacional & Nearshoring',
+    asunto: 'Comercio Internacional y Nearshoring',
     mensaje: ''
   })
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData({
-      ...formData,
+  const privacyDialogRef = useRef<HTMLDialogElement | null>(null)
+
+  useEffect(() => {
+    const dialog = privacyDialogRef.current
+    if (!dialog) return
+
+    // Fallback obligatorio para navegadores sin soporte nativo de closedby="any"
+    if (!('closedBy' in HTMLDialogElement.prototype)) {
+      const handleBackdropClick = (event: MouseEvent) => {
+        if (event.target !== dialog) return
+        const rect = dialog.getBoundingClientRect()
+        const isDialogContent =
+          rect.top <= event.clientY &&
+          event.clientY <= rect.top + rect.height &&
+          rect.left <= event.clientX &&
+          event.clientX <= rect.left + rect.width
+
+        if (isDialogContent) return
+        dialog.close()
+      }
+
+      dialog.addEventListener('click', handleBackdropClick)
+      return () => {
+        dialog.removeEventListener('click', handleBackdropClick)
+      }
+    }
+  }, [])
+
+  const openPrivacyDialog = () => {
+    privacyDialogRef.current?.showModal()
+  }
+
+  const closePrivacyDialog = () => {
+    privacyDialogRef.current?.close()
+  }
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
       [e.target.name]: e.target.value
-    })
+    }))
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    const subject = encodeURIComponent(`[TecLegal Web] Consulta: ${formData.asunto} - ${formData.empresa || formData.nombre}`)
+    const subject = encodeURIComponent(
+      `[TecLegal Web] Consulta: ${formData.asunto} - ${formData.empresa || formData.nombre}`
+    )
     const body = encodeURIComponent(
       `Nombre: ${formData.nombre}\n` +
-      `Empresa: ${formData.empresa}\n` +
-      `Correo: ${formData.correo}\n` +
-      `Asunto: ${formData.asunto}\n\n` +
-      `Mensaje:\n${formData.mensaje}\n\n---\nEnviado desde el portal oficial de TecLegal S.A.S`
+        `Empresa / Entidad: ${formData.empresa || 'No especificada'}\n` +
+        `Correo: ${formData.correo}\n` +
+        `Área de consulta: ${formData.asunto}\n\n` +
+        `Descripción:\n${formData.mensaje}\n\n---\nEnviado desde el portal oficial de TecLegal S.A.S`
     )
     window.location.href = `mailto:contacto@teclegal.co?subject=${subject}&body=${body}`
     setFormSubmitted(true)
   }
 
+  const filteredCases =
+    activeFilter === 'Todos'
+      ? CASE_STUDIES
+      : CASE_STUDIES.filter((item) => item.category === activeFilter)
+
   return (
-    <div className="stage-wrapper">
-      {/* 
-        ========================================================================
-        HERO SECTION: MATCHING THE EDITORIAL SCREENSHOT COMPOSITION
-        - Rounded card frame with subtle border
-        - Clean office background + sharp portrait
-        - Left dark scrim for high-contrast typography
-        - "AI-Powered Legal Intelligence" style badge
-        - Editorial Serif Headline
-        - White rounded pill CTA with circular arrow
-        - Top nav with maroon capsule button
-        - Bottom 3-column value pillars with thin hairline icons
-        ========================================================================
-      */}
-      <section className="hero-stage">
-        <div className="hero-photo-bg"></div>
-        <div className="hero-scrim-left"></div>
-        <div className="hero-scrim-bottom"></div>
-        <div className="hero-scrim-top"></div>
+    <div className="page-canvas">
+      <div className="ambient-glow-burgundy" aria-hidden="true" />
+      <div className="ambient-glow-gold" aria-hidden="true" />
 
-        {/* TOP NAVBAR WITHIN FRAME */}
-        <header className="frame-nav">
-          <a href="#inicio" className="brand-monogram">
-            <img src="./logo.png" alt="TecLegal Logo" className="brand-logo-img" />
-            <span className="brand-name-serif">TecLegal</span>
-          </a>
+      <main className="showcase-stack">
+        {/* ====================================================================
+            SECCIÓN 1: HERO EDITORIAL ENMARCADO (ESTILO SHOWCASE LEXIQ)
+           ==================================================================== */}
+        <section id="inicio" className="hero-showcase-frame">
+          <img
+            src="./hero-editorial.jpg"
+            alt="Equipo jurídico de TecLegal en Bogotá"
+            className="hero-bg-img"
+            fetchPriority="high"
+            width={1600}
+            height={960}
+          />
+          <div className="hero-scrim-left" aria-hidden="true" />
+          <div className="hero-scrim-bottom" aria-hidden="true" />
+          <div className="hero-scrim-top" aria-hidden="true" />
 
-          <button 
-            className="mobile-toggle"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            {mobileMenuOpen ? <X size={26} /> : <Menu size={26} />}
-          </button>
-
-          <ul className={`nav-links-center ${mobileMenuOpen ? 'open' : ''}`}>
-            <li><a href="#inicio" className="nav-anchor" onClick={() => setMobileMenuOpen(false)}>Inicio</a></li>
-            <li><a href="#firma" className="nav-anchor" onClick={() => setMobileMenuOpen(false)}>La Firma</a></li>
-            <li><a href="#servicios" className="nav-anchor" onClick={() => setMobileMenuOpen(false)}>Servicios</a></li>
-            <li><a href="#equipo" className="nav-anchor" onClick={() => setMobileMenuOpen(false)}>Socios</a></li>
-            <li><a href="#experiencia" className="nav-anchor" onClick={() => setMobileMenuOpen(false)}>Casos</a></li>
-          </ul>
-
-          <div className="nav-right-actions">
-            <div className="lang-selector">
-              <span>ES</span>
-              <ChevronDown size={14} />
-            </div>
-            <a href="#contacto" className="btn-capsule-wine">
-              <span>Contacto</span>
-              <span className="circle-arrow">
-                <ArrowRight size={14} />
-              </span>
+          {/* Barra de navegación flotante oscura dentro del marco */}
+          <header className="floating-glass-nav">
+            <a href="#inicio" className="nav-brand-link" aria-label="TecLegal Inicio">
+              <TecLegalMark />
             </a>
-          </div>
-        </header>
 
-        {/* HERO MAIN BODY */}
-        <div className="hero-main-content">
-          <div className="pill-badge">
-            <span className="spark-dot">✦</span>
-            <span>LegalTech &amp; Transnational Law</span>
-          </div>
+            <button
+              type="button"
+              className="mobile-menu-toggle"
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              aria-label={mobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
+              aria-expanded={mobileMenuOpen}
+            >
+              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
 
-          <h1 className="hero-h1-editorial">
-            A Smarter Future for Global Legal Strategy
-          </h1>
+            <nav aria-label="Navegación principal" className={`nav-center-wrap ${mobileMenuOpen ? 'open' : ''}`}>
+              <ul className="nav-links-list">
+                <li>
+                  <a href="#inicio" className="nav-link-item active" onClick={() => setMobileMenuOpen(false)}>
+                    Inicio
+                  </a>
+                </li>
+                <li>
+                  <a href="#nosotros" className="nav-link-item" onClick={() => setMobileMenuOpen(false)}>
+                    Nosotros
+                  </a>
+                </li>
+                <li>
+                  <a href="#servicios" className="nav-link-item" onClick={() => setMobileMenuOpen(false)}>
+                    Servicios
+                  </a>
+                </li>
+                <li>
+                  <a href="#abogados" className="nav-link-item" onClick={() => setMobileMenuOpen(false)}>
+                    Abogados
+                  </a>
+                </li>
+                <li>
+                  <a href="#casos" className="nav-link-item" onClick={() => setMobileMenuOpen(false)}>
+                    Casos de Éxito
+                  </a>
+                </li>
+              </ul>
 
-          <p className="hero-sub-p">
-            Optimizamos la gestión legal corporativa, contratos transfronterizos y arbitraje internacional combinando 20 años de rigor jurídico sénior con herramientas LegalTech de vanguardia.
-          </p>
+              <div className="nav-actions-right">
+                <span className="lang-pill" aria-label="Idioma Español">
+                  <span>ES</span>
+                  <ChevronDown size={14} />
+                </span>
+                <a
+                  href="#contacto"
+                  className="btn-pill-wine"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span>Contáctenos</span>
+                  <span className="pill-circle-white">
+                    <ArrowRight size={14} strokeWidth={2.2} />
+                  </span>
+                </a>
+              </div>
+            </nav>
+          </header>
 
-          <div>
-            <a href="#contacto" className="btn-capsule-white">
-              <span>Iniciar Asesoría</span>
-              <span className="circle-arrow-dark">
-                <ArrowRight size={15} />
+          {/* Contenido editorial izquierdo */}
+          <div className="hero-content-zone">
+            <div className="eyebrow-pill">
+              <span className="eyebrow-dot-circle">
+                <Sparkles size={12} strokeWidth={2.2} />
               </span>
-            </a>
-          </div>
-        </div>
+              <span>Inteligencia Jurídica &amp; LegalTech</span>
+            </div>
 
-        {/* 3 VALUE PILLARS AT BOTTOM (MATCHING REFERENCE EXACTLY) */}
-        <div className="hero-footer-pillars">
-          {/* Pillar 1: Personalized Guidance */}
-          <div className="pillar-unit">
-            <div className="pillar-icon-line">
-              <Gavel size={32} strokeWidth={1.5} />
-            </div>
-            <div className="pillar-text-group">
-              <h3 className="pillar-headline-serif">Personalized guidance</h3>
-              <p className="pillar-desc-sub">
-                Una experiencia jurídica boutique a medida, enfocada en los objetivos estratégicos y protección de su negocio.
-              </p>
-            </div>
-          </div>
+            <h1 className="hero-headline-serif">
+              Un Futuro más Inteligente
+              <br />
+              para la Gestión Legal
+            </h1>
 
-          {/* Pillar 2: AI-driven insights / LegalTech */}
-          <div className="pillar-unit">
-            <div className="pillar-icon-line">
-              <Wand2 size={32} strokeWidth={1.5} />
-            </div>
-            <div className="pillar-text-group">
-              <h3 className="pillar-headline-serif">AI-driven insights</h3>
-              <p className="pillar-desc-sub">
-                Potenciamos el análisis de riesgos, contratos complejos e investigación con herramientas LegalTech de precisión.
-              </p>
-            </div>
-          </div>
-
-          {/* Pillar 3: Confidential & secure */}
-          <div className="pillar-unit">
-            <div className="pillar-icon-line">
-              <Headphones size={32} strokeWidth={1.5} />
-            </div>
-            <div className="pillar-text-group">
-              <h3 className="pillar-headline-serif">Confidential &amp; secure</h3>
-              <p className="pillar-desc-sub">
-                Equipo sénior disponible y confiable: un mensaje de distancia, listos para respaldar sus operaciones clave.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 
-        ========================================================================
-        SECTION 1: SOBRE TECLEGAL & VALORES
-        ========================================================================
-      */}
-      <section id="firma" className="content-section">
-        <div className="container">
-          <div className="section-head-dark">
-            <span className="section-tag-gold">Sobre TecLegal S.A.S</span>
-            <h2 className="section-title-serif">
-              Firma boutique con sede en Bogotá para el <span className="gold">entorno empresarial transnacional</span>
-            </h2>
-            <p className="section-lead-muted">
-              Nuestro equipo sénior combina dos décadas de trayectoria jurídica con una perspectiva avanzada en contratos y transacciones internacionales, transformando la complejidad regulatoria en operaciones transfronterizas seguras y altamente competitivas.
+            <p className="hero-lead-copy">
+              Simplificamos las operaciones jurídicas transnacionales, haciendo más ágil, rigurosa y estratégica la contratación internacional, la defensa comercial y el arbitraje mediante soluciones LegalTech.
             </p>
-          </div>
 
-          <div className="cards-3col-grid">
-            <div className="luxury-card">
-              <span className="card-top-num">01 / Innovación</span>
-              <h3 className="card-title-serif">Innovación continua</h3>
-              <p className="card-body-text">
-                Incorporamos las tecnologías LegalTech más recientes para optimizar el análisis jurídico, reducir tiempos y blindar cada transacción con precisión matemática.
-              </p>
-              <div className="card-tags-list">
-                <div className="card-tag-row">
-                  <Sparkles size={16} className="card-tag-bullet" />
-                  <span>Automatización y gestión de contingencias</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="luxury-card">
-              <span className="card-top-num">02 / Excelencia</span>
-              <h3 className="card-title-serif">Excelencia y rigor</h3>
-              <p className="card-body-text">
-                Asesoramiento de la más alta calidad técnica respaldado por socios que han actuado ante tribunales arbitrales internacionales y organismos multilaterales.
-              </p>
-              <div className="card-tags-list">
-                <div className="card-tag-row">
-                  <ShieldCheck size={16} className="card-tag-bullet" />
-                  <span>Estándares normativos transfronterizos</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="luxury-card">
-              <span className="card-top-num">03 / Humanidad</span>
-              <h3 className="card-title-serif">Valor humano &amp; Ética</h3>
-              <p className="card-body-text">
-                Priorizamos la dignidad de las partes, la solución pacífica de discrepancias y un compromiso total de transparencia e inexistencia de conflictos de interés.
-              </p>
-              <div className="card-tags-list">
-                <div className="card-tag-row">
-                  <CheckCircle2 size={16} className="card-tag-bullet" />
-                  <span>Confidencialidad absoluta y lealtad profesional</span>
-                </div>
-              </div>
+            <div className="hero-cta-group">
+              <a href="#contacto" className="btn-pill-light">
+                <span>Iniciar Consulta</span>
+                <span className="pill-circle-wine">
+                  <ArrowRight size={16} strokeWidth={2} />
+                </span>
+              </a>
+              <a href="#servicios" className="btn-pill-ghost">
+                <span>Explorar Prácticas</span>
+              </a>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* 
-        ========================================================================
-        SECTION 2: ÁREAS DE PRÁCTICA (SERVICIOS DE LA PROPUESTA)
-        ========================================================================
-      */}
-      <section id="servicios" className="content-section" style={{ background: '#070e1c' }}>
-        <div className="container">
-          <div className="section-head-dark">
-            <span className="section-tag-gold">Áreas de Práctica</span>
-            <h2 className="section-title-serif">
-              Soluciones jurídicas estratégicas alineadas a su <span className="magenta">expansión global</span>
-            </h2>
-            <p className="section-lead-muted">
-              Respuestas ágiles en comercio exterior, contratos financieros complejos, esquemas fiduciarios y resolución de disputas de alta cuantía.
-            </p>
-          </div>
-
-          <div className="cards-3col-grid">
-            {/* Práctica 1 */}
-            <div className="luxury-card">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span className="card-top-num">Área 01</span>
-                <Globe size={24} color="#e2c509" />
+          {/* Barra inferior de 3 pilares dentro del Hero */}
+          <div className="hero-bottom-features">
+            <div className="hero-feature-item">
+              <div className="hero-feature-icon">
+                <Gavel size={28} strokeWidth={1.5} />
               </div>
-              <h3 className="card-title-serif">Comercio Internacional</h3>
-              <p className="card-body-text">
-                Estructuración de operaciones de nearshoring, aprovechamiento de acuerdos de libre comercio (TLC) y gestión integral de la protección de flujos de exportación e importación.
-              </p>
-              <ul className="card-tags-list">
-                <li className="card-tag-row">
-                  <CheckCircle2 size={16} className="card-tag-bullet" />
-                  <span>Investigaciones antidumping y salvaguardias</span>
-                </li>
-                <li className="card-tag-row">
-                  <CheckCircle2 size={16} className="card-tag-bullet" />
-                  <span>Estructuración y relocalización de cadenas de valor</span>
-                </li>
-                <li className="card-tag-row">
-                  <CheckCircle2 size={16} className="card-tag-bullet" />
-                  <span>Defensa comercial ante autoridades aduaneras</span>
-                </li>
-              </ul>
-            </div>
-
-            {/* Práctica 2 */}
-            <div className="luxury-card">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span className="card-top-num">Área 02</span>
-                <Briefcase size={24} color="#e0448a" />
-              </div>
-              <h3 className="card-title-serif">Negocios Internacionales e Inversión</h3>
-              <p className="card-body-text">
-                Acompañamiento a empresas multinacionales en procesos de ‘soft landing’ en Colombia. Revisión y redacción de contratos internacionales, loan agreements y esquemas fiduciarios de garantía.
-              </p>
-              <ul className="card-tags-list">
-                <li className="card-tag-row">
-                  <CheckCircle2 size={16} className="card-tag-bullet" />
-                  <span>Soft landing y estructuración corporativa local</span>
-                </li>
-                <li className="card-tag-row">
-                  <CheckCircle2 size={16} className="card-tag-bullet" />
-                  <span>Revisión de loan agreements y SPVs transfronterizos</span>
-                </li>
-                <li className="card-tag-row">
-                  <CheckCircle2 size={16} className="card-tag-bullet" />
-                  <span>Fideicomisos y cesión de derechos de cobro</span>
-                </li>
-              </ul>
-            </div>
-
-            {/* Práctica 3 */}
-            <div className="luxury-card">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span className="card-top-num">Área 03</span>
-                <Scale size={24} color="#ffd41c" />
-              </div>
-              <h3 className="card-title-serif">Resolución de Disputas &amp; Arbitraje</h3>
-              <p className="card-body-text">
-                Arbitraje comercial nacional e internacional con experiencia activa como árbitros en Hong Kong (E-BRAM), Madrid y CCB. Mediación y Online Dispute Resolution (ODR) de alto nivel.
-              </p>
-              <ul className="card-tags-list">
-                <li className="card-tag-row">
-                  <CheckCircle2 size={16} className="card-tag-bullet" />
-                  <span>Tribunales arbitrales comerciales y fiduciarios</span>
-                </li>
-                <li className="card-tag-row">
-                  <CheckCircle2 size={16} className="card-tag-bullet" />
-                  <span>Litigio societario y financiero estratégico</span>
-                </li>
-                <li className="card-tag-row">
-                  <CheckCircle2 size={16} className="card-tag-bullet" />
-                  <span>Plataformas ODR &amp; resolución digital de disputas</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 
-        ========================================================================
-        SECTION 3: SOCIOS DIRECTORES (ATTORNEYS)
-        ========================================================================
-      */}
-      <section id="equipo" className="content-section">
-        <div className="container">
-          <div className="section-head-dark">
-            <span className="section-tag-gold">Liderazgo Sénior</span>
-            <h2 className="section-title-serif">
-              Socios Directores con <span className="gold">experiencia global</span>
-            </h2>
-            <p className="section-lead-muted">
-              Liderazgo directo en cada asunto. Respaldados por formación en NYU, Heidelberg, Carlos III de Madrid y Singapore National University.
-            </p>
-          </div>
-
-          <div className="team-2col-grid">
-            {/* Socio 1: Nicolás Lozada */}
-            <div className="partner-card-dark">
-              <div className="partner-img-box">
-                <img src="./nicolas-lozada.png" alt="Nicolás Lozada Pimiento" className="partner-img-actual" />
-                <span className="partner-badge-pos">Socio Fundador</span>
-              </div>
-              <div className="partner-details-box">
-                <h3 className="partner-name-serif">Nicolás Lozada Pimiento</h3>
-                <span className="partner-role-line">Comercio Exterior, Arbitraje &amp; LegalTech</span>
-                <p className="partner-desc-p">
-                  Abogado y profesor universitario con más de 20 años de trayectoria en negocios internacionales y resolución de controversias. Fundador de REDEK (justicia digital) y árbitro en centros internacionales como E-bram (Hong Kong) y la Cámara de Comercio de Madrid.
-                </p>
-                <ul className="partner-milestones">
-                  <li className="milestone-item">
-                    <CheckCircle2 size={16} color="#e0448a" style={{ flexShrink: 0, marginTop: 2 }} />
-                    <span>LL.M. en New York University (NYU) y National University of Singapore.</span>
-                  </li>
-                  <li className="milestone-item">
-                    <CheckCircle2 size={16} color="#e0448a" style={{ flexShrink: 0, marginTop: 2 }} />
-                    <span>Delegado de Colombia ante Naciones Unidas (UNCITRAL) en ODR y soborno transnacional.</span>
-                  </li>
-                  <li className="milestone-item">
-                    <CheckCircle2 size={16} color="#e0448a" style={{ flexShrink: 0, marginTop: 2 }} />
-                    <span>Miembro activo de organismos internacionales NCTDR, ICODR y TCL.</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            {/* Socio 2: Jorge Armando Corredor */}
-            <div className="partner-card-dark">
-              <div className="partner-img-box">
-                <img src="./jorge-corredor.png" alt="Jorge Armando Corredor Higuera" className="partner-img-actual" />
-                <span className="partner-badge-pos">Socio Director</span>
-              </div>
-              <div className="partner-details-box">
-                <h3 className="partner-name-serif">Jorge Armando Corredor Higuera</h3>
-                <span className="partner-role-line">Derecho Financiero, Esquemas Fiduciarios &amp; Valores</span>
-                <p className="partner-desc-p">
-                  Abogado de la Universidad Nacional, LL.M. en Universität Heidelberg (Alemania) y Doctor en Derecho por la Universidad Carlos III de Madrid. Especialista de máxima autoridad en operaciones fiduciarias y litigios del sector bursátil y bancario.
-                </p>
-                <ul className="partner-milestones">
-                  <li className="milestone-item">
-                    <CheckCircle2 size={16} color="#ffd41c" style={{ flexShrink: 0, marginTop: 2 }} />
-                    <span>Exfuncionario de la Superintendencia Financiera de Colombia.</span>
-                  </li>
-                  <li className="milestone-item">
-                    <CheckCircle2 size={16} color="#ffd41c" style={{ flexShrink: 0, marginTop: 2 }} />
-                    <span>Miembro de la Sala Disciplinaria del AMV y la Bolsa Mercantil de Colombia.</span>
-                  </li>
-                  <li className="milestone-item">
-                    <CheckCircle2 size={16} color="#ffd41c" style={{ flexShrink: 0, marginTop: 2 }} />
-                    <span>Docente de pregrado y posgrado en derecho bancario en la Univ. Externado.</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 
-        ========================================================================
-        SECTION 4: EXPERIENCIA Y CASOS REALES (CASE STUDIES)
-        ========================================================================
-      */}
-      <section id="experiencia" className="content-section" style={{ background: '#070e1c' }}>
-        <div className="container">
-          <div className="section-head-dark">
-            <span className="section-tag-gold">Track Record Comprobado</span>
-            <h2 className="section-title-serif">
-              Casos Reales y Mandatos <span className="gold">Internacionales</span>
-            </h2>
-            <p className="section-lead-muted">
-              Transacciones representativas asesoradas exitosamente por el equipo directivo de TecLegal.
-            </p>
-          </div>
-
-          <div className="track-record-grid">
-            <div className="record-column">
-              <div className="record-col-header">
-                <Globe size={26} color="#e0448a" />
-                <span>Asesoría Contractual y ODR</span>
-              </div>
-              <div className="record-list">
-                <div>
-                  <h4 className="record-item-title">Emirates Development Bank (EDB)</h4>
-                  <p className="record-item-desc">
-                    Estructuración legal de instrumentos de financiamiento sostenible para pymes en proyectos de inteligencia artificial con incorporación de KPIs de uso responsable de IA.
-                  </p>
-                </div>
-                <div>
-                  <h4 className="record-item-title">Monetary Authority of Singapore (MAS)</h4>
-                  <p className="record-item-desc">
-                    Implementación de mecanismos de resolución de controversias en línea (ODR) aplicables al financiamiento verde y sostenible.
-                  </p>
-                </div>
-                <div>
-                  <h4 className="record-item-title">Katoen Natie (Bélgica)</h4>
-                  <p className="record-item-desc">
-                    Asesoría integral en el establecimiento corporativo de su filial colombiana y negociación de contratos transnacionales.
-                  </p>
-                </div>
-                <div>
-                  <h4 className="record-item-title">Eco1st &amp; Next Level Solutions (EE. UU.)</h4>
-                  <p className="record-item-desc">
-                    Consultoría legal corporativa y soft-landing para sus operaciones de servicios y tecnología en el mercado colombiano.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="record-column">
-              <div className="record-col-header">
-                <Building2 size={26} color="#ffd41c" />
-                <span>Estructuración Fiduciaria y Litigio</span>
-              </div>
-              <div className="record-list">
-                <div>
-                  <h4 className="record-item-title">Esquemas Fiduciarios Inmobiliarios y Hoteleros</h4>
-                  <p className="record-item-desc">
-                    Estructuración contractual integral para la titularización y comercialización de derechos fiduciarios en proyectos hoteleros en Colombia.
-                  </p>
-                </div>
-                <div>
-                  <h4 className="record-item-title">Sistemas de Compensación y Liquidación</h4>
-                  <p className="record-item-desc">
-                    Conceptos jurídicos de alta especialidad en garantías mobiliarias y fiducias aplicadas a depósitos centralizados de valores.
-                  </p>
-                </div>
-                <div>
-                  <h4 className="record-item-title">Tribunal Arbitral Nali vs. Canales</h4>
-                  <p className="record-item-desc">
-                    Participación arbitral en procesos de restitución inmobiliaria derivados de esquemas de fiducia mercantil de garantía.
-                  </p>
-                </div>
-                <div>
-                  <h4 className="record-item-title">Defensa ante la Superintendencia Financiera</h4>
-                  <p className="record-item-desc">
-                    Representación judicial y regulatoria de entidades y contrapartes frente a controversias en estructuras fiduciarias.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 
-        ========================================================================
-        SECTION 5: CONTACTO & FORMULARIO EDITORIAL
-        ========================================================================
-      */}
-      <section id="contacto" className="content-section">
-        <div className="container">
-          <div className="consultation-box">
-            <div className="consultation-info-col">
               <div>
-                <span className="section-tag-gold">Contacto Directo</span>
-                <h2 className="consult-title-serif">Hablemos sobre su operación</h2>
-                <p className="consult-text-p">
-                  Evaluamos su consulta con absoluta confidencialidad, rigor técnico y atención directa de nuestros socios fundadores.
+                <h2 className="hero-feature-title">Atención personalizada</h2>
+                <p className="hero-feature-desc">
+                  Asesoría jurídica boutique adaptada a las necesidades únicas y objetivos estratégicos de cada cliente.
                 </p>
-
-                <div className="consult-channels">
-                  <div className="channel-row">
-                    <div className="channel-icon-pill">
-                      <MapPin size={20} />
-                    </div>
-                    <div>
-                      <div className="channel-label-small">Sede Principal</div>
-                      <div className="channel-val-strong">Bogotá D.C., Colombia</div>
-                    </div>
-                  </div>
-
-                  <div className="channel-row">
-                    <div className="channel-icon-pill">
-                      <Mail size={20} />
-                    </div>
-                    <div>
-                      <div className="channel-label-small">Correo Electrónico</div>
-                      <div className="channel-val-strong">contacto@teclegal.co</div>
-                    </div>
-                  </div>
-
-                  <div className="channel-row">
-                    <div className="channel-icon-pill">
-                      <Clock size={20} />
-                    </div>
-                    <div>
-                      <div className="channel-label-small">Horario de Atención</div>
-                      <div className="channel-val-strong">Lunes a Viernes &bull; 8:00 - 18:00 COT</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div style={{ marginTop: '2rem', fontSize: '0.82rem', color: '#64748b' }}>
-                TecLegal S.A.S &bull; Sin conflictos de interés &bull; Cumplimiento normativo transfronterizo.
               </div>
             </div>
 
-            <div className="consultation-form-col">
-              <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.9rem', color: '#fff', marginBottom: '1.5rem' }}>
-                Formulario de Solicitud
-              </h3>
+            <div className="hero-feature-item">
+              <div className="hero-feature-icon">
+                <WandSparkles size={28} strokeWidth={1.5} />
+              </div>
+              <div>
+                <h2 className="hero-feature-title">Innovación LegalTech</h2>
+                <p className="hero-feature-desc">
+                  Incorporamos tecnologías avanzadas para fortalecer el análisis jurídico, la contratación y la resolución de disputas.
+                </p>
+              </div>
+            </div>
 
-              {formSubmitted ? (
-                <div style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid #10b981', padding: '1.5rem', borderRadius: '12px', color: '#6ee7b7' }}>
-                  <h4 style={{ fontWeight: 700, marginBottom: '0.5rem' }}>¡Consulta enviada con éxito!</h4>
-                  <p style={{ fontSize: '0.92rem' }}>
-                    Se ha abierto su gestor de correo con el formato oficial para el equipo de TecLegal S.A.S. Si lo prefiere, contáctenos directamente a <strong>contacto@teclegal.co</strong>.
+            <div className="hero-feature-item">
+              <div className="hero-feature-icon">
+                <Headphones size={28} strokeWidth={1.5} />
+              </div>
+              <div>
+                <h2 className="hero-feature-title">Confidencialidad y rigor</h2>
+                <p className="hero-feature-desc">
+                  Equipo sénior en Bogotá a un mensaje de distancia, con 20 años de excelencia legal y valor humano.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ====================================================================
+            SECCIÓN 2: ¿QUIÉNES SOMOS? & ¿POR QUÉ TECLEGAL?
+           ==================================================================== */}
+        <section id="nosotros" className="framed-showcase-section">
+          <div className="about-showcase-grid">
+            <div className="about-narrative-col">
+              <div className="eyebrow-pill">
+                <span className="eyebrow-dot-circle">
+                  <ShieldCheck size={12} strokeWidth={2.2} />
+                </span>
+                <span>Sobre TecLegal S.A.S.</span>
+              </div>
+
+              <h2 className="section-headline-serif">
+                Rigor Sénior de 20 Años con Perspectiva Transnacional
+              </h2>
+
+              <p className="body-copy-muted">
+                Somos una firma boutique con sede en Bogotá, especializada en la gestión integral de riesgos legales para el entorno empresarial transnacional. Nuestro equipo sénior combina 20 años de trayectoria jurídica con una perspectiva avanzada en contratos y transacciones internacionales.
+              </p>
+              <p className="body-copy-muted">
+                Nuestra práctica se apoya en herramientas <strong>LegalTech</strong> para fortalecer el análisis jurídico, optimizar procesos y ofrecer a nuestros clientes soluciones rigurosas, eficientes y alineadas con las exigencias contemporáneas del ejercicio legal.
+              </p>
+
+              <div className="about-photo-card">
+                <img
+                  src="./equipo-reunion.jpg"
+                  alt="Mesa de trabajo y equipo jurídico de TecLegal S.A.S. en Bogotá"
+                  className="about-team-photo"
+                  loading="lazy"
+                  width={746}
+                  height={809}
+                />
+                <div className="about-photo-overlay">
+                  <span className="ethics-badge">TECLEGAL S.A.S. &bull; Sede Bogotá</span>
+                  <p className="ethics-note">
+                    Independencia ética y ausencia total de incompatibilidades o conflictos de interés en cada mandato corporativo.
                   </p>
                 </div>
-              ) : (
-                <form className="dark-form" onSubmit={handleSubmit}>
-                  <div>
-                    <label className="field-label">Nombre completo *</label>
-                    <input 
-                      type="text" 
-                      name="nombre" 
-                      required 
-                      className="input-dark" 
-                      placeholder="Ej. Dr. Carlos Mendoza"
-                      value={formData.nombre}
-                      onChange={handleInputChange}
-                    />
+              </div>
+            </div>
+
+            <div className="pillars-bento-grid">
+              <article className="glass-pillar-card">
+                <div className="glass-icon-ring">
+                  <Lightbulb size={24} strokeWidth={1.5} />
+                </div>
+                <h3 className="card-headline-serif">Innovación continua</h3>
+                <p className="card-body-copy">
+                  Incorporamos las tecnologías más recientes para optimizar nuestros servicios, la gestión documental y los procesos de análisis contractual.
+                </p>
+              </article>
+
+              <article className="glass-pillar-card">
+                <div className="glass-icon-ring gold-ring">
+                  <Award size={24} strokeWidth={1.5} />
+                </div>
+                <h3 className="card-headline-serif">Excelencia legal</h3>
+                <p className="card-body-copy">
+                  Nos esforzamos por ofrecer asesoramiento y soluciones jurídicas de la más alta calidad técnica bajo estándares locales e internacionales.
+                </p>
+              </article>
+
+              <article className="glass-pillar-card">
+                <div className="glass-icon-ring">
+                  <Users size={24} strokeWidth={1.5} />
+                </div>
+                <h3 className="card-headline-serif">Atención personalizada</h3>
+                <p className="card-body-copy">
+                  Entendemos las necesidades únicas de cada cliente y adaptamos nuestras soluciones jurídicas para satisfacer sus requerimientos específicos.
+                </p>
+              </article>
+
+              <article className="glass-pillar-card">
+                <div className="glass-icon-ring gold-ring">
+                  <HeartHandshake size={24} strokeWidth={1.5} />
+                </div>
+                <h3 className="card-headline-serif">Valor humano</h3>
+                <p className="card-body-copy">
+                  Más allá de nuestros conocimientos legales, valoramos y priorizamos el bienestar y la dignidad de las personas, ponderando el impacto humano y social.
+                </p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        {/* ====================================================================
+            SECCIÓN 3: ÁREAS DE PRÁCTICA Y SERVICIOS
+           ==================================================================== */}
+        <section id="servicios" className="framed-showcase-section">
+          <div className="section-header-editorial">
+            <div className="eyebrow-pill">
+              <span className="eyebrow-dot-circle">
+                <Briefcase size={12} strokeWidth={2.2} />
+              </span>
+              <span>Nuestras Especialidades</span>
+            </div>
+            <h2 className="section-headline-serif">
+              Soluciones Jurídicas para Operaciones Globales
+            </h2>
+            <p className="section-subcopy">
+              Transformamos la complejidad regulatoria en operaciones transfronterizas seguras, eficientes y altamente competitivas.
+            </p>
+          </div>
+
+          <div className="services-3col-grid">
+            {/* Área 01 */}
+            <article className="service-showcase-card">
+              <div className="service-card-top">
+                <div className="service-icon-capsule">
+                  <Globe size={24} strokeWidth={1.5} />
+                </div>
+                <span className="service-index-num">01</span>
+              </div>
+              <h3 className="service-title-serif">Comercio Internacional &amp; Defensa Comercial</h3>
+              <p className="service-copy">
+                Estructuramos operaciones de <em>nearshoring</em>, asesoramos en el aprovechamiento de tratados de libre comercio y gestionamos la protección de flujos de exportación e importación.
+              </p>
+              <ul className="service-bullet-list">
+                <li>
+                  <CheckCircle2 size={15} className="bullet-gold" />
+                  <span>Representación y lobby de alto nivel en investigaciones de defensa comercial (antidumping, salvaguardias y subvenciones).</span>
+                </li>
+                <li>
+                  <CheckCircle2 size={15} className="bullet-gold" />
+                  <span>Estructuración logística y aduanera para cadenas de suministro en nearshoring.</span>
+                </li>
+              </ul>
+              <a href="#contacto" className="btn-pill-card-action">
+                <span>Consultar área</span>
+                <ArrowRight size={14} />
+              </a>
+            </article>
+
+            {/* Área 02 */}
+            <article className="service-showcase-card">
+              <div className="service-card-top">
+                <div className="service-icon-capsule">
+                  <Briefcase size={24} strokeWidth={1.5} />
+                </div>
+                <span className="service-index-num">02</span>
+              </div>
+              <h3 className="service-title-serif">Negocios Internacionales, Inversión &amp; Fiducias</h3>
+              <p className="service-copy">
+                Facilitamos la expansión de empresas internacionales en Colombia a través de procesos de <em>soft landing</em> y estructuración legal estratégica, junto con redacción y revisión de contratos bajo estándares internacionales.
+              </p>
+              <ul className="service-bullet-list">
+                <li>
+                  <CheckCircle2 size={15} className="bullet-gold" />
+                  <span>Revisión bajo derecho local de <em>loan agreements</em> entre SPVs extranjeros y deudores locales (enforceability y retenciones fiscales).</span>
+                </li>
+                <li>
+                  <CheckCircle2 size={15} className="bullet-gold" />
+                  <span>Contratos de fideicomiso de garantía, esquemas de cesión de derechos de cobro y validación regulatoria.</span>
+                </li>
+              </ul>
+              <a href="#contacto" className="btn-pill-card-action">
+                <span>Consultar área</span>
+                <ArrowRight size={14} />
+              </a>
+            </article>
+
+            {/* Área 03 */}
+            <article className="service-showcase-card">
+              <div className="service-card-top">
+                <div className="service-icon-capsule">
+                  <Scale size={24} strokeWidth={1.5} />
+                </div>
+                <span className="service-index-num">03</span>
+              </div>
+              <h3 className="service-title-serif">Resolución de Disputas, Arbitraje &amp; ODR</h3>
+              <p className="service-copy">
+                Combinamos la agilidad de una firma boutique con la visión estratégica de nuestro socio líder, árbitro en los principales centros del país y centros internacionales como <strong>E-bram (Hong Kong)</strong> y la <strong>Cámara de Comercio de Madrid</strong>.
+              </p>
+              <ul className="service-bullet-list">
+                <li>
+                  <CheckCircle2 size={15} className="bullet-gold" />
+                  <span>Negociación, mediación, conciliación, arbitraje comercial/fiduciario y litigio estratégico.</span>
+                </li>
+                <li>
+                  <CheckCircle2 size={15} className="bullet-gold" />
+                  <span>Mecanismos de <em>Online Dispute Resolution</em> (ODR) respaldados por herramientas LegalTech.</span>
+                </li>
+              </ul>
+              <a href="#contacto" className="btn-pill-card-action">
+                <span>Consultar área</span>
+                <ArrowRight size={14} />
+              </a>
+            </article>
+          </div>
+        </section>
+
+        {/* ====================================================================
+            SECCIÓN 4: SOCIOS DIRECTORES / ABOGADOS
+           ==================================================================== */}
+        <section id="abogados" className="framed-showcase-section">
+          <div className="section-header-editorial">
+            <div className="eyebrow-pill">
+              <span className="eyebrow-dot-circle">
+                <Users size={12} strokeWidth={2.2} />
+              </span>
+              <span>Liderazgo Sénior</span>
+            </div>
+            <h2 className="section-headline-serif">Socios Directores</h2>
+            <p className="section-subcopy">
+              Trayectoria académica internacional, experiencia arbitral y conocimiento profundo del sector financiero y corporativo.
+            </p>
+          </div>
+
+          <div className="partners-2col-grid">
+            {/* Socio 1: Nicolás Lozada Pimiento */}
+            <article className="partner-bento-card">
+              <div className="partner-portrait-col">
+                <img
+                  src="./nicolas-lozada.png"
+                  alt="Nicolás Lozada Pimiento - Socio Fundador de TecLegal"
+                  className="partner-portrait-img"
+                  loading="lazy"
+                  width={362}
+                  height={362}
+                />
+                <span className="partner-role-pill">Socio Fundador</span>
+              </div>
+
+              <div className="partner-bio-col">
+                <h3 className="partner-name-serif">Nicolás Lozada Pimiento</h3>
+                <p className="partner-specialty">
+                  Negocios Internacionales, Arbitraje, Comercio Exterior &amp; LegalTech
+                </p>
+                <p className="partner-bio-text">
+                  Abogado y profesor universitario con más de 20 años de experiencia en estructuración de esquemas contractuales complejos, arbitraje comercial y comercio exterior. Fundador de <strong>REDEK</strong>, la primera startup colombiana dedicada a la justicia digital y resolución de disputas en línea (ODR).
+                </p>
+                <ul className="partner-credentials">
+                  <li>
+                    <CheckCircle2 size={15} className="bullet-wine" />
+                    <span>Maestrías en Derecho (LL.M.) por New York University (NYU) y National University of Singapore (NUS).</span>
+                  </li>
+                  <li>
+                    <CheckCircle2 size={15} className="bullet-wine" />
+                    <span>Árbitro y secretario de tribunales en disputas comerciales, financieras y fiduciarias (E-bram Hong Kong, Cámara de Madrid).</span>
+                  </li>
+                  <li>
+                    <CheckCircle2 size={15} className="bullet-wine" />
+                    <span>Consultor y delegado de Colombia ante Naciones Unidas; miembro de NCTDR, ICODR y TCL.</span>
+                  </li>
+                </ul>
+              </div>
+            </article>
+
+            {/* Socio 2: Jorge Armando Corredor Higuera */}
+            <article className="partner-bento-card">
+              <div className="partner-portrait-col">
+                <img
+                  src="./jorge-corredor.png"
+                  alt="Jorge Armando Corredor Higuera - Socio Director de TecLegal"
+                  className="partner-portrait-img"
+                  loading="lazy"
+                  width={362}
+                  height={362}
+                />
+                <span className="partner-role-pill">Socio Director</span>
+              </div>
+
+              <div className="partner-bio-col">
+                <h3 className="partner-name-serif">Jorge Armando Corredor Higuera</h3>
+                <p className="partner-specialty">
+                  Derecho Financiero, Mercado de Valores, Crédito &amp; Fiducias
+                </p>
+                <p className="partner-bio-text">
+                  Abogado y especialista de la Universidad Nacional de Colombia, Máster (LL.M.) en Derecho Internacional, Inversiones, Comercio y Arbitraje por Heidelberg University (Alemania) y Doctor en Derecho (Ph.D.) por la Universidad Carlos III de Madrid (España).
+                </p>
+                <ul className="partner-credentials">
+                  <li>
+                    <CheckCircle2 size={15} className="bullet-wine" />
+                    <span>Exfuncionario de la Superintendencia Financiera de Colombia y árbitro nacional.</span>
+                  </li>
+                  <li>
+                    <CheckCircle2 size={15} className="bullet-wine" />
+                    <span>Miembro del Comité Académico y Tribunal/Cámara Disciplinaria de la Bolsa Mercantil de Colombia (BMC) y del Autorregulador del Mercado de Valores (AMV).</span>
+                  </li>
+                  <li>
+                    <CheckCircle2 size={15} className="bullet-wine" />
+                    <span>Docente de pregrado y posgrado en derecho bancario y bursátil en la Universidad Externado de Colombia.</span>
+                  </li>
+                </ul>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        {/* ====================================================================
+            SECCIÓN 5: CASOS DE ÉXITO Y EXPERIENCIA ESPECÍFICA
+           ==================================================================== */}
+        <section id="casos" className="framed-showcase-section">
+          <div className="cases-header-flex">
+            <div>
+              <div className="eyebrow-pill">
+                <span className="eyebrow-dot-circle">
+                  <Scale size={12} strokeWidth={2.2} />
+                </span>
+                <span>Casos de Éxito &amp; Track Record</span>
+              </div>
+              <h2 className="section-headline-serif">Experiencia Específica Documentada</h2>
+            </div>
+
+            <div className="filter-pills-row" role="tablist" aria-label="Filtrar casos de éxito por área">
+              {CASE_FILTERS.map((category) => (
+                <button
+                  key={category}
+                  type="button"
+                  role="tab"
+                  aria-selected={activeFilter === category}
+                  onClick={() => setActiveFilter(category)}
+                  className={`filter-pill-btn ${activeFilter === category ? 'is-active' : ''}`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="cases-2col-grid">
+            {filteredCases.map((item) => (
+              <article key={item.id} className="case-glass-card">
+                <div className="case-card-meta">
+                  <span className="case-tag-pill">{item.tag}</span>
+                  <span className="case-category-label">{item.category}</span>
+                </div>
+                <h3 className="case-entity-serif">{item.entity}</h3>
+                <p className="case-summary-copy">{item.summary}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        {/* ====================================================================
+            SECCIÓN 6: CONTACTO Y SOLICITUD DE PROPUESTA
+           ==================================================================== */}
+        <section id="contacto" className="framed-showcase-section contact-showcase-frame">
+          <div className="contact-split-grid">
+            <div className="contact-left-panel">
+              <div>
+                <div className="eyebrow-pill">
+                  <span className="eyebrow-dot-circle">
+                    <Mail size={12} strokeWidth={2.2} />
+                  </span>
+                  <span>Contacto Directo</span>
+                </div>
+
+                <h2 className="section-headline-serif">
+                  Iniciemos una Conversación Estratégica
+                </h2>
+
+                <p className="body-copy-muted">
+                  Evaluamos cada mandato bajo estricta confidencialidad, ofreciendo esquemas flexibles de tarifa fija por alcance o modelo por horas consumidas conforme a las necesidades de su operación.
+                </p>
+
+                <div className="contact-meta-list">
+                  <div className="contact-meta-row">
+                    <div className="contact-icon-circle">
+                      <MapPin size={18} strokeWidth={1.6} />
+                    </div>
+                    <div>
+                      <span className="meta-label-small">Sede Principal</span>
+                      <p className="meta-value-strong">Bogotá D.C., Colombia</p>
+                    </div>
                   </div>
 
-                  <div>
-                    <label className="field-label">Empresa o Institución</label>
-                    <input 
-                      type="text" 
-                      name="empresa" 
-                      className="input-dark" 
-                      placeholder="Nombre de la compañía"
-                      value={formData.empresa}
-                      onChange={handleInputChange}
-                    />
+                  <div className="contact-meta-row">
+                    <div className="contact-icon-circle">
+                      <Mail size={18} strokeWidth={1.6} />
+                    </div>
+                    <div>
+                      <span className="meta-label-small">Correo Institucional</span>
+                      <p className="meta-value-strong">contacto@teclegal.co</p>
+                    </div>
                   </div>
 
-                  <div>
-                    <label className="field-label">Correo electrónico corporativo *</label>
-                    <input 
-                      type="email" 
-                      name="correo" 
-                      required 
-                      className="input-dark" 
-                      placeholder="nombre@organizacion.com"
-                      value={formData.correo}
-                      onChange={handleInputChange}
-                    />
+                  <div className="contact-meta-row">
+                    <div className="contact-icon-circle">
+                      <Clock size={18} strokeWidth={1.6} />
+                    </div>
+                    <div>
+                      <span className="meta-label-small">Modalidades de Honorarios</span>
+                      <p className="meta-value-strong">Tarifa Fija por Proyecto o Modelo por Horas</p>
+                    </div>
                   </div>
+                </div>
+              </div>
 
-                  <div>
-                    <label className="field-label">Área o Tipo de Servicio *</label>
-                    <select 
-                      name="asunto" 
-                      className="select-dark"
-                      value={formData.asunto}
-                      onChange={handleInputChange}
-                    >
-                      <option value="Comercio Internacional & Nearshoring">Comercio Internacional &amp; Nearshoring</option>
-                      <option value="Negocios Internacionales e Inversión (Soft Landing)">Negocios Internacionales e Inversión (Soft Landing)</option>
-                      <option value="Arbitraje y Resolución de Disputas">Arbitraje Comercial &amp; Disputas</option>
-                      <option value="Revisión de Fideicomiso o Loan Agreement">Revisión de Fideicomiso o Loan Agreement</option>
-                      <option value="LegalTech & Soluciones Digitales">LegalTech &amp; Soluciones Digitales</option>
-                      <option value="Otra Asesoría Corporativa">Otra Asesoría Corporativa</option>
-                    </select>
-                  </div>
+              <div className="contact-trust-seals">
+                <div className="trust-seal-chip">
+                  <Gavel size={15} strokeWidth={1.6} />
+                  <span>Atención Personalizada</span>
+                </div>
+                <div className="trust-seal-chip">
+                  <WandSparkles size={15} strokeWidth={1.6} />
+                  <span>Análisis LegalTech</span>
+                </div>
+                <div className="trust-seal-chip">
+                  <Headphones size={15} strokeWidth={1.6} />
+                  <span>Confidencialidad Total</span>
+                </div>
+              </div>
+            </div>
 
-                  <div>
-                    <label className="field-label">Detalle del requerimiento *</label>
-                    <textarea 
-                      name="mensaje" 
-                      required 
-                      className="textarea-dark" 
-                      placeholder="Describa el alcance de la operación, partes involucradas o jurisdicción aplicable..."
-                      value={formData.mensaje}
-                      onChange={handleInputChange}
-                    ></textarea>
-                  </div>
-
-                  <button type="submit" className="btn-capsule-wine" style={{ justifyContent: 'center', width: '100%', padding: '0.85rem' }}>
-                    <span>Enviar Consulta a TecLegal</span>
-                    <span className="circle-arrow">
+            <div className="contact-right-panel">
+              {formSubmitted ? (
+                <div className="form-success-glass" role="status">
+                  <h3 className="section-headline-serif" style={{ fontSize: '1.9rem' }}>
+                    ¡Solicitud Preparada!
+                  </h3>
+                  <p className="body-copy-muted">
+                    Hemos preparado el borrador de su consulta para nuestros socios directores. Si su aplicación de correo no se abrió automáticamente, escríbanos directamente a{' '}
+                    <strong>contacto@teclegal.co</strong>.
+                  </p>
+                  <button
+                    type="button"
+                    className="btn-pill-light"
+                    onClick={() => setFormSubmitted(false)}
+                  >
+                    <span>Enviar otra consulta</span>
+                    <span className="pill-circle-wine">
                       <ArrowRight size={15} />
                     </span>
                   </button>
+                </div>
+              ) : (
+                <form className="showcase-form" onSubmit={handleSubmit}>
+                  <div className="form-row-2col">
+                    <div className="field-block">
+                      <label htmlFor="nombre" className="field-label-text">
+                        Nombre completo *
+                      </label>
+                      <input
+                        id="nombre"
+                        type="text"
+                        name="nombre"
+                        required
+                        className="field-control-glass"
+                        placeholder="Ej. Dra. María Fernández"
+                        value={formData.nombre}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+
+                    <div className="field-block">
+                      <label htmlFor="empresa" className="field-label-text">
+                        Empresa / Entidad
+                      </label>
+                      <input
+                        id="empresa"
+                        type="text"
+                        name="empresa"
+                        className="field-control-glass"
+                        placeholder="Nombre de su organización"
+                        value={formData.empresa}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-row-2col">
+                    <div className="field-block">
+                      <label htmlFor="correo" className="field-label-text">
+                        Correo electrónico *
+                      </label>
+                      <input
+                        id="correo"
+                        type="email"
+                        name="correo"
+                        required
+                        className="field-control-glass"
+                        placeholder="nombre@organizacion.com"
+                        value={formData.correo}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+
+                    <div className="field-block">
+                      <label htmlFor="asunto" className="field-label-text">
+                        Área de interés *
+                      </label>
+                      <select
+                        id="asunto"
+                        name="asunto"
+                        className="field-control-glass"
+                        value={formData.asunto}
+                        onChange={handleInputChange}
+                      >
+                        <option value="Comercio Internacional y Nearshoring">
+                          Comercio Internacional &amp; Nearshoring
+                        </option>
+                        <option value="Negocios Internacionales e Inversión">
+                          Negocios Internacionales &amp; Soft Landing
+                        </option>
+                        <option value="Arbitraje y Resolución de Disputas">
+                          Arbitraje, Disputas &amp; ODR
+                        </option>
+                        <option value="Estructuración Fiduciaria y Financiera">
+                          Estructuración Fiduciaria &amp; SPVs
+                        </option>
+                        <option value="LegalTech y Análisis Contractual">
+                          LegalTech &amp; Análisis Contractual
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="field-block">
+                    <label htmlFor="mensaje" className="field-label-text">
+                      Detalles de la operación o consulta *
+                    </label>
+                    <textarea
+                      id="mensaje"
+                      name="mensaje"
+                      required
+                      className="field-control-glass field-textarea"
+                      placeholder="Describa brevemente el alcance jurídico, jurisdicciones o contrato que requiere revisar..."
+                      value={formData.mensaje}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+
+                  <div className="form-footer-actions">
+                    <button type="submit" className="btn-pill-light">
+                      <span>Enviar Consulta</span>
+                      <span className="pill-circle-wine">
+                        <ArrowRight size={16} strokeWidth={2} />
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={openPrivacyDialog}
+                      className="privacy-trigger-link"
+                    >
+                      Política de Tratamiento de Datos
+                    </button>
+                  </div>
                 </form>
               )}
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* 
-        ========================================================================
-        FOOTER
-        ========================================================================
-      */}
-      <footer className="site-footer">
-        <div className="container">
-          <div className="footer-inner-grid">
-            <div>
-              <div className="brand-monogram">
-                <img src="./logo.png" alt="TecLegal Logo" className="brand-logo-img" />
-                <span className="brand-name-serif">TecLegal</span>
-              </div>
-              <p className="footer-about-p">
-                TecLegal S.A.S &bull; Firma boutique con sede en Bogotá especializada en gestión integral de riesgos jurídicos, transacciones transfronterizas, arbitraje comercial y LegalTech.
-              </p>
+          <footer className="showcase-footer-bar">
+            <div className="footer-brand-line">
+              <TecLegalMark />
+              <span className="footer-tagline">
+                TecLegal S.A.S. &bull; Firma Boutique de Derecho Transnacional &amp; LegalTech
+              </span>
             </div>
 
-            <div>
-              <h4 className="footer-nav-col-title">Secciones</h4>
-              <ul className="footer-links-vertical">
-                <li><a href="#inicio" className="footer-a">Inicio</a></li>
-                <li><a href="#firma" className="footer-a">Quiénes somos</a></li>
-                <li><a href="#servicios" className="footer-a">Servicios y Oferta</a></li>
-                <li><a href="#equipo" className="footer-a">Socios Directores</a></li>
-                <li><a href="#experiencia" className="footer-a">Casos de Éxito</a></li>
-              </ul>
+            <div className="footer-right-links">
+              <button type="button" onClick={openPrivacyDialog} className="footer-link-btn">
+                Privacidad y Datos (Ley 1581)
+              </button>
+              <a href="#nosotros" className="footer-link-btn">
+                Incompatibilidades
+              </a>
+              <span className="copyright-text">
+                &copy; {new Date().getFullYear()} TecLegal S.A.S.
+              </span>
             </div>
+          </footer>
+        </section>
+      </main>
 
-            <div>
-              <h4 className="footer-nav-col-title">Legal &amp; Ética</h4>
-              <ul className="footer-links-vertical">
-                <li>
-                  <button onClick={() => setPrivacyModalOpen(true)} className="footer-a">
-                    Política de Tratamiento de Datos
-                  </button>
-                </li>
-                <li>
-                  <a href="#firma" className="footer-a">
-                    Declaración de Incompatibilidades
-                  </a>
-                </li>
-                <li>
-                  <a href="#contacto" className="footer-a">
-                    contacto@teclegal.co
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="footer-closing-bar">
-            <div>
-              &copy; {new Date().getFullYear()} TecLegal S.A.S. Todos los derechos reservados.
-            </div>
-            <div>
-              Bogotá D.C., Colombia &bull; Servicios Jurídicos Profesionales
-            </div>
-          </div>
-        </div>
-      </footer>
-
-      {/* MODAL PRIVACIDAD */}
-      {privacyModalOpen && (
-        <div 
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(4, 8, 18, 0.85)',
-            backdropFilter: 'blur(6px)',
-            zIndex: 9999,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '1.5rem'
-          }}
-          onClick={() => setPrivacyModalOpen(false)}
-        >
-          <div 
-            style={{
-              background: '#0c1527',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              borderRadius: '20px',
-              maxWidth: '650px',
-              width: '100%',
-              padding: '2.5rem',
-              position: 'relative',
-              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.8)'
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button 
-              onClick={() => setPrivacyModalOpen(false)}
-              style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', color: '#94a3b8' }}
-            >
-              <X size={24} />
-            </button>
-            <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.8rem', color: '#fff', marginBottom: '1rem' }}>
-              Tratamiento de Datos Personales
+      {/* ====================================================================
+          MODAL NATIVO <dialog> CON LIGHT DISMISS (closedby="any" + FALLBACK)
+         ==================================================================== */}
+      <dialog
+        ref={privacyDialogRef}
+        {...({ closedby: 'any' } as Record<string, string>)}
+        aria-labelledby="privacy-dialog-title"
+        className="privacy-dialog"
+      >
+        <div className="privacy-dialog-inner">
+          <div className="privacy-dialog-header">
+            <h3 id="privacy-dialog-title" className="section-headline-serif" style={{ fontSize: '1.85rem' }}>
+              Política de Tratamiento de Datos Personales
             </h3>
-            <p style={{ fontSize: '0.92rem', color: '#94a3b8', lineHeight: 1.6, marginBottom: '1rem' }}>
-              De conformidad con la Ley Estatutaria 1581 de 2012 de la República de Colombia, <strong>TecLegal S.A.S.</strong> garantiza que la información suministrada a través de nuestros canales y formularios será tratada con confidencialidad profesional absoluta y utilizada únicamente para evaluar su consulta jurídica y coordinar comunicaciones entre las partes.
-            </p>
-            <p style={{ fontSize: '0.92rem', color: '#94a3b8', lineHeight: 1.6 }}>
-              Para ejercer sus derechos de consulta, actualización o supresión de datos, puede escribir directamente a <strong>contacto@teclegal.co</strong>.
-            </p>
+            <button
+              type="button"
+              onClick={closePrivacyDialog}
+              className="dialog-close-btn"
+              aria-label="Cerrar ventana de privacidad"
+            >
+              <X size={20} />
+            </button>
           </div>
+
+          <p className="body-copy-muted" style={{ marginBottom: '1rem' }}>
+            En cumplimiento de la Ley Estatutaria 1581 de 2012 y sus decretos reglamentarios en la República de Colombia, <strong>TecLegal S.A.S.</strong> informa que los datos personales suministrados voluntariamente mediante este portal serán tratados exclusivamente para atender su solicitud de asesoría jurídica, preparar propuestas profesionales de servicios y gestionar comunicaciones corporativas directas.
+          </p>
+          <p className="body-copy-muted" style={{ marginBottom: '1.75rem' }}>
+            Como titular, usted puede conocer, actualizar, rectificar o solicitar la supresión de sus datos en cualquier momento escribiendo a <strong>contacto@teclegal.co</strong>. TecLegal S.A.S. no cede ni comercializa datos personales con terceros.
+          </p>
+
+          <form method="dialog">
+            <button type="submit" className="btn-pill-wine">
+              <span>Entendido y Cerrar</span>
+              <span className="pill-circle-white">
+                <X size={14} />
+              </span>
+            </button>
+          </form>
         </div>
-      )}
+      </dialog>
     </div>
   )
 }
