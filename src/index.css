@@ -1,13 +1,12 @@
 /* ============================================================================
    TECLEGAL — EDITORIAL DARK SHOWCASE DESIGN SYSTEM
-   Inspirado en la composición de alto contraste tipo LEXIQ + identidad TecLegal
+   Inspiración estética en composición editorial oscura + identidad TecLegal
    ============================================================================ */
 :root {
-  --bg-canvas: #121015;
-  --bg-frame: #16131a;
-  --bg-glass-card: rgba(24, 21, 28, 0.78);
-  --bg-glass-nav: rgba(24, 21, 26, 0.84);
-  --bg-card-hover: rgba(34, 28, 40, 0.9);
+  --bg-canvas: #0f0e13;
+  --bg-frame: #15131a;
+  --bg-glass-card: rgba(23, 20, 28, 0.78);
+  --bg-glass-nav: rgba(22, 19, 26, 0.82);
 
   --color-wine: #6d1d3a;
   --color-wine-hover: #872448;
@@ -21,8 +20,8 @@
   --text-muted: #c2bec9;
   --text-dim: #958fa1;
 
-  --border-frame-hero: rgba(255, 255, 255, 0.78);
-  --border-frame-section: rgba(255, 255, 255, 0.16);
+  --border-frame-hero: rgba(255, 255, 255, 0.72);
+  --border-frame-section: rgba(255, 255, 255, 0.14);
   --border-subtle: rgba(255, 255, 255, 0.1);
 
   --font-serif: 'Cormorant Garamond', Georgia, serif;
@@ -74,8 +73,9 @@ button {
   position: relative;
   min-height: 100dvh;
   padding: 1.25rem;
-  background: radial-gradient(circle at 20% 10%, rgba(109, 29, 58, 0.2) 0%, transparent 45%),
-              radial-gradient(circle at 85% 45%, rgba(226, 197, 9, 0.06) 0%, transparent 40%),
+  background: radial-gradient(circle at 15% 12%, rgba(109, 29, 58, 0.22) 0%, transparent 45%),
+              radial-gradient(circle at 85% 40%, rgba(30, 51, 94, 0.25) 0%, transparent 45%),
+              radial-gradient(circle at 75% 85%, rgba(226, 197, 9, 0.06) 0%, transparent 40%),
               var(--bg-canvas);
 }
 
@@ -92,7 +92,7 @@ button {
   width: 55dvw;
   height: 55dvw;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(172, 18, 89, 0.16) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(172, 18, 89, 0.14) 0%, transparent 70%);
   pointer-events: none;
   z-index: 0;
 }
@@ -104,7 +104,7 @@ button {
   width: 50dvw;
   height: 50dvw;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(226, 197, 9, 0.07) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(226, 197, 9, 0.06) 0%, transparent 70%);
   pointer-events: none;
   z-index: 0;
 }
@@ -120,7 +120,7 @@ button {
 }
 
 /* ============================================================================
-   HERO SHOWCASE FRAME
+   HERO SHOWCASE FRAME (REAL ARCHITECTURAL PHOTOGRAPHY)
    ============================================================================ */
 .hero-showcase-frame {
   position: relative;
@@ -132,30 +132,34 @@ button {
   flex-direction: column;
   justify-content: space-between;
   box-shadow: 0 32px 90px rgba(0, 0, 0, 0.72), 0 0 0 1px rgba(255, 255, 255, 0.08);
-  background-color: #141118;
+  background-color: #131118;
+}
+
+.hero-picture-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
 }
 
 .hero-bg-img {
-  position: absolute;
-  inset: 0;
   width: 100%;
   height: 100%;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 16 / 10;
   object-fit: cover;
-  object-position: 75% center;
-  z-index: 1;
+  object-position: center 35%;
+  filter: saturate(0.75) contrast(1.06) brightness(0.68);
+  display: block;
 }
 
 .hero-scrim-left {
   position: absolute;
   inset: 0;
   background: linear-gradient(
-    90deg,
-    rgba(16, 13, 19, 0.96) 0%,
-    rgba(18, 15, 21, 0.88) 38%,
-    rgba(18, 15, 21, 0.45) 62%,
-    rgba(18, 15, 21, 0.1) 88%,
-    transparent 100%
+    95deg,
+    rgba(14, 12, 18, 0.96) 0%,
+    rgba(16, 14, 21, 0.88) 42%,
+    rgba(22, 18, 30, 0.56) 72%,
+    rgba(30, 51, 94, 0.42) 100%
   );
   z-index: 2;
 }
@@ -163,11 +167,11 @@ button {
 .hero-scrim-bottom {
   position: absolute;
   inset: auto 0 0 0;
-  height: 50%;
+  height: 48%;
   background: linear-gradient(
     0deg,
-    rgba(15, 12, 18, 0.96) 0%,
-    rgba(15, 12, 18, 0.72) 52%,
+    rgba(13, 11, 17, 0.97) 0%,
+    rgba(13, 11, 17, 0.74) 55%,
     transparent 100%
   );
   z-index: 2;
@@ -177,7 +181,7 @@ button {
   position: absolute;
   inset: 0 0 auto 0;
   height: 140px;
-  background: linear-gradient(180deg, rgba(14, 11, 16, 0.75) 0%, transparent 100%);
+  background: linear-gradient(180deg, rgba(13, 11, 17, 0.8) 0%, transparent 100%);
   z-index: 2;
 }
 
@@ -188,7 +192,7 @@ button {
   position: relative;
   z-index: 20;
   margin: 1.5rem 2rem 0;
-  padding: 0.8rem 1.4rem;
+  padding: 0.78rem 1.4rem;
   border-radius: 14px;
   background: var(--bg-glass-nav);
   backdrop-filter: blur(18px);
@@ -282,7 +286,7 @@ button {
 }
 
 /* ============================================================================
-   CAPSULE BUTTONS & PILLS (LEXIQ REFERENCE)
+   CAPSULE BUTTONS & PILLS
    ============================================================================ */
 .btn-pill-wine {
   background: linear-gradient(135deg, var(--color-wine), #54142b);
@@ -374,13 +378,20 @@ button {
 }
 
 /* ============================================================================
-   HERO CONTENT & BOTTOM 3-COLUMN BAR
+   HERO SPLIT BODY + GLASS METRICS PANEL + BOTTOM BAR
    ============================================================================ */
-.hero-content-zone {
+.hero-split-body {
   position: relative;
   z-index: 10;
-  padding: 3.5rem 2.75rem 2.5rem;
-  max-width: 720px;
+  padding: 3rem 2.75rem 2.25rem;
+  display: grid;
+  grid-template-columns: 1.25fr 0.75fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.hero-content-zone {
+  max-width: 680px;
 }
 
 .eyebrow-pill {
@@ -389,13 +400,13 @@ button {
   gap: 0.55rem;
   padding: 0.35rem 1rem 0.35rem 0.45rem;
   border-radius: var(--radius-pill);
-  background: rgba(24, 21, 28, 0.65);
+  background: rgba(24, 21, 28, 0.72);
   border: 1px solid rgba(255, 255, 255, 0.22);
   backdrop-filter: blur(10px);
   font-size: 0.8rem;
   font-weight: 500;
   color: var(--text-light);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.4rem;
 }
 
 .eyebrow-dot-circle {
@@ -411,21 +422,26 @@ button {
 
 .hero-headline-serif {
   font-family: var(--font-serif);
-  font-size: clamp(2.2rem, 1.4rem + 2.8vw, 4.2rem);
+  font-size: clamp(2.2rem, 1.4rem + 2.6vw, 4rem);
   font-weight: 600;
-  line-height: 1.06;
+  line-height: 1.07;
   letter-spacing: -0.02em;
   color: var(--text-white);
-  margin-bottom: 1.35rem;
+  margin-bottom: 1.25rem;
 }
 
 .hero-lead-copy {
-  font-size: clamp(0.95rem, 0.85rem + 0.35vw, 1.1rem);
+  font-size: clamp(0.95rem, 0.85rem + 0.35vw, 1.08rem);
   color: var(--text-muted);
-  max-width: 560px;
-  line-height: 1.65;
+  max-width: 580px;
+  line-height: 1.68;
   font-weight: 400;
-  margin-bottom: 2.1rem;
+  margin-bottom: 2rem;
+}
+
+.hero-lead-copy strong {
+  color: var(--text-white);
+  font-weight: 600;
 }
 
 .hero-cta-group {
@@ -435,11 +451,67 @@ button {
   gap: 1rem;
 }
 
+.hero-glass-metrics {
+  background: rgba(18, 16, 23, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 22px;
+  padding: 1.75rem;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+}
+
+.metric-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1rem;
+  margin-bottom: 1.15rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.metric-badge-gold {
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--color-gold-bright);
+}
+
+.metric-icon-muted {
+  color: var(--text-muted);
+}
+
+.metric-items-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.metric-stat-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.metric-number-serif {
+  font-family: var(--font-serif);
+  font-size: 1.55rem;
+  font-weight: 600;
+  color: var(--text-white);
+  line-height: 1.15;
+}
+
+.metric-caption {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
 .hero-bottom-features {
   position: relative;
   z-index: 10;
   margin: 0 2.75rem;
-  padding: 1.85rem 0 2.15rem;
+  padding: 1.75rem 0 2rem;
   border-top: 1px solid rgba(255, 255, 255, 0.2);
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -453,9 +525,16 @@ button {
 }
 
 .hero-feature-icon {
-  color: rgba(255, 255, 255, 0.88);
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: var(--color-gold-bright);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
-  margin-top: 0.15rem;
 }
 
 .hero-feature-title {
@@ -464,7 +543,7 @@ button {
   font-weight: 600;
   color: var(--text-white);
   line-height: 1.2;
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.35rem;
 }
 
 .hero-feature-desc {
@@ -474,7 +553,7 @@ button {
 }
 
 /* ============================================================================
-   FRAMED SHOWCASE SECTIONS (CONSISTENCY ACROSS ENTIRE PAGE)
+   FRAMED SHOWCASE SECTIONS
    ============================================================================ */
 .framed-showcase-section {
   background: linear-gradient(155deg, rgba(24, 21, 28, 0.92) 0%, rgba(16, 14, 20, 0.96) 100%);
@@ -517,7 +596,7 @@ button {
 }
 
 /* ============================================================================
-   SECCIÓN 2: NOSOTROS & PILARES (2x2 BENTO)
+   SECCIÓN 2: NOSOTROS & PILARES
    ============================================================================ */
 .about-showcase-grid {
   display: grid;
@@ -620,7 +699,7 @@ button {
 }
 
 /* ============================================================================
-   SECCIÓN 3: ÁREAS DE PRÁCTICA (3 COLUMNAS SHOWCASE)
+   SECCIÓN 3: ÁREAS DE PRÁCTICA
    ============================================================================ */
 .services-3col-grid {
   display: grid;
@@ -737,7 +816,7 @@ button {
 }
 
 /* ============================================================================
-   SECCIÓN 4: SOCIOS DIRECTORES (BENTO CARDS)
+   SECCIÓN 4: SOCIOS DIRECTORES
    ============================================================================ */
 .partners-2col-grid {
   display: grid;
@@ -831,7 +910,7 @@ button {
 }
 
 /* ============================================================================
-   SECCIÓN 5: CASOS DE ÉXITO CON FILTROS TIPO PÍLDORA
+   SECCIÓN 5: CASOS DE ÉXITO
    ============================================================================ */
 .cases-header-flex {
   display: flex;
@@ -1180,6 +1259,7 @@ dialog.privacy-dialog::backdrop {
    RESPONSIVE BREAKPOINTS
    ============================================================================ */
 @media (max-width: 1080px) {
+  .hero-split-body,
   .about-showcase-grid,
   .contact-split-grid,
   .partners-2col-grid,
@@ -1246,8 +1326,9 @@ dialog.privacy-dialog::backdrop {
     padding: 0.7rem 1rem;
   }
 
-  .hero-content-zone {
-    padding: 2.5rem 1.25rem 2rem;
+  .hero-split-body {
+    padding: 2.25rem 1.25rem 1.75rem;
+    gap: 2rem;
   }
 
   .hero-bottom-features {

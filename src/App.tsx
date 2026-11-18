@@ -1,24 +1,26 @@
 import React, { useEffect, useRef, useState } from 'react'
 import {
   ArrowRight,
-  Award,
+  ArrowUpRight,
+  BookOpen,
   Briefcase,
+  Building2,
   CheckCircle2,
   ChevronDown,
   Clock,
-  Gavel,
+  Compass,
+  Cpu,
   Globe,
-  Headphones,
-  HeartHandshake,
-  Lightbulb,
+  Handshake,
+  Landmark,
+  Layers,
+  Lock,
   Mail,
   MapPin,
   Menu,
   Scale,
   ShieldCheck,
   Sparkles,
-  Users,
-  WandSparkles,
   X
 } from 'lucide-react'
 
@@ -138,8 +140,8 @@ const TecLegalMark: React.FC = () => {
   return (
     <span className="brand-monogram">
       <svg
-        width="38"
-        height="38"
+        width="36"
+        height="36"
         viewBox="0 0 62 62"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -176,7 +178,6 @@ export const App: React.FC = () => {
     const dialog = privacyDialogRef.current
     if (!dialog) return
 
-    // Fallback obligatorio para navegadores sin soporte nativo de closedby="any"
     if (!('closedBy' in HTMLDialogElement.prototype)) {
       const handleBackdropClick = (event: MouseEvent) => {
         if (event.target !== dialog) return
@@ -243,22 +244,25 @@ export const App: React.FC = () => {
 
       <main className="showcase-stack">
         {/* ====================================================================
-            SECCIÓN 1: HERO EDITORIAL ENMARCADO (ESTILO SHOWCASE LEXIQ)
+            SECCIÓN 1: HERO SHOWCASE ARQUITECTÓNICO (INSPIRACIÓN EDITORIAL)
            ==================================================================== */}
         <section id="inicio" className="hero-showcase-frame">
-          <img
-            src="./hero-editorial.jpg"
-            alt="Equipo jurídico de TecLegal en Bogotá"
-            className="hero-bg-img"
-            fetchPriority="high"
-            width={1600}
-            height={960}
-          />
+          <picture className="hero-picture-layer">
+            <source media="(max-width: 720px)" srcSet="./arquitectura-portada-mobile.webp" />
+            <img
+              src="./arquitectura-portada.webp"
+              alt="Arquitectura corporativa contemporánea — TecLegal S.A.S."
+              className="hero-bg-img"
+              fetchPriority="high"
+              width={1400}
+              height={2100}
+            />
+          </picture>
           <div className="hero-scrim-left" aria-hidden="true" />
           <div className="hero-scrim-bottom" aria-hidden="true" />
           <div className="hero-scrim-top" aria-hidden="true" />
 
-          {/* Barra de navegación flotante oscura dentro del marco */}
+          {/* Barra de navegación flotante oscura */}
           <header className="floating-glass-nav">
             <a href="#inicio" className="nav-brand-link" aria-label="TecLegal Inicio">
               <TecLegalMark />
@@ -283,22 +287,22 @@ export const App: React.FC = () => {
                 </li>
                 <li>
                   <a href="#nosotros" className="nav-link-item" onClick={() => setMobileMenuOpen(false)}>
-                    Nosotros
+                    La Firma
                   </a>
                 </li>
                 <li>
                   <a href="#servicios" className="nav-link-item" onClick={() => setMobileMenuOpen(false)}>
-                    Servicios
+                    Prácticas
                   </a>
                 </li>
                 <li>
                   <a href="#abogados" className="nav-link-item" onClick={() => setMobileMenuOpen(false)}>
-                    Abogados
+                    Socios
                   </a>
                 </li>
                 <li>
                   <a href="#casos" className="nav-link-item" onClick={() => setMobileMenuOpen(false)}>
-                    Casos de Éxito
+                    Experiencia
                   </a>
                 </li>
               </ul>
@@ -313,7 +317,7 @@ export const App: React.FC = () => {
                   className="btn-pill-wine"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  <span>Contáctenos</span>
+                  <span>Agendar Consulta</span>
                   <span className="pill-circle-white">
                     <ArrowRight size={14} strokeWidth={2.2} />
                   </span>
@@ -322,72 +326,102 @@ export const App: React.FC = () => {
             </nav>
           </header>
 
-          {/* Contenido editorial izquierdo */}
-          <div className="hero-content-zone">
-            <div className="eyebrow-pill">
-              <span className="eyebrow-dot-circle">
-                <Sparkles size={12} strokeWidth={2.2} />
-              </span>
-              <span>Inteligencia Jurídica &amp; LegalTech</span>
-            </div>
-
-            <h1 className="hero-headline-serif">
-              Un Futuro más Inteligente
-              <br />
-              para la Gestión Legal
-            </h1>
-
-            <p className="hero-lead-copy">
-              Simplificamos las operaciones jurídicas transnacionales, haciendo más ágil, rigurosa y estratégica la contratación internacional, la defensa comercial y el arbitraje mediante soluciones LegalTech.
-            </p>
-
-            <div className="hero-cta-group">
-              <a href="#contacto" className="btn-pill-light">
-                <span>Iniciar Consulta</span>
-                <span className="pill-circle-wine">
-                  <ArrowRight size={16} strokeWidth={2} />
+          {/* Cuerpo principal del Hero: texto editorial a la izquierda + tarjeta métrica a la derecha */}
+          <div className="hero-split-body">
+            <div className="hero-content-zone">
+              <div className="eyebrow-pill">
+                <span className="eyebrow-dot-circle">
+                  <Sparkles size={12} strokeWidth={2.2} />
                 </span>
-              </a>
-              <a href="#servicios" className="btn-pill-ghost">
-                <span>Explorar Prácticas</span>
-              </a>
+                <span>Firma Boutique &bull; Bogotá &amp; Alcance Global</span>
+              </div>
+
+              <h1 className="hero-headline-serif">
+                Estrategia Legal de Alto Nivel para Negocios Transnacionales
+              </h1>
+
+              <p className="hero-lead-copy">
+                Combinamos 20 años de trayectoria sénior en contratos internacionales, defensa comercial y arbitraje con herramientas <strong>LegalTech</strong> para proteger y escalar sus operaciones globales.
+              </p>
+
+              <div className="hero-cta-group">
+                <a href="#contacto" className="btn-pill-light">
+                  <span>Iniciar Consulta</span>
+                  <span className="pill-circle-wine">
+                    <ArrowRight size={16} strokeWidth={2} />
+                  </span>
+                </a>
+                <a href="#servicios" className="btn-pill-ghost">
+                  <span>Explorar Prácticas</span>
+                </a>
+              </div>
             </div>
+
+            <aside className="hero-glass-metrics" aria-label="Indicadores clave de TecLegal">
+              <div className="metric-header-row">
+                <span className="metric-badge-gold">TECLEGAL S.A.S.</span>
+                <Building2 size={18} strokeWidth={1.6} className="metric-icon-muted" />
+              </div>
+
+              <div className="metric-items-stack">
+                <div className="metric-stat-block">
+                  <span className="metric-number-serif">+20 Años</span>
+                  <span className="metric-caption">
+                    Trayectoria sénior en contratación internacional, banca, fiducias y comercio exterior.
+                  </span>
+                </div>
+
+                <div className="metric-stat-block">
+                  <span className="metric-number-serif">LegalTech &amp; ODR</span>
+                  <span className="metric-caption">
+                    Análisis contractual asistido por tecnología y mecanismos digitales de resolución de disputas.
+                  </span>
+                </div>
+
+                <div className="metric-stat-block">
+                  <span className="metric-number-serif">Alcance Global</span>
+                  <span className="metric-caption">
+                    Mandatos ejecutados entre Colombia, EE. UU., Europa, Singapur y Emiratos Árabes.
+                  </span>
+                </div>
+              </div>
+            </aside>
           </div>
 
-          {/* Barra inferior de 3 pilares dentro del Hero */}
+          {/* Barra inferior de 3 pilares dentro del Hero con íconos renovados */}
           <div className="hero-bottom-features">
             <div className="hero-feature-item">
               <div className="hero-feature-icon">
-                <Gavel size={28} strokeWidth={1.5} />
+                <Landmark size={26} strokeWidth={1.5} />
               </div>
               <div>
-                <h2 className="hero-feature-title">Atención personalizada</h2>
+                <h2 className="hero-feature-title">Rigor Transnacional</h2>
                 <p className="hero-feature-desc">
-                  Asesoría jurídica boutique adaptada a las necesidades únicas y objetivos estratégicos de cada cliente.
+                  Estructuración contractual, fiducias y defensa comercial bajo estándares jurídicos internacionales.
                 </p>
               </div>
             </div>
 
             <div className="hero-feature-item">
               <div className="hero-feature-icon">
-                <WandSparkles size={28} strokeWidth={1.5} />
+                <Cpu size={26} strokeWidth={1.5} />
               </div>
               <div>
-                <h2 className="hero-feature-title">Innovación LegalTech</h2>
+                <h2 className="hero-feature-title">Impulso LegalTech</h2>
                 <p className="hero-feature-desc">
-                  Incorporamos tecnologías avanzadas para fortalecer el análisis jurídico, la contratación y la resolución de disputas.
+                  Herramientas digitales avanzadas para optimizar el análisis jurídico, la prevención de riesgos y el ODR.
                 </p>
               </div>
             </div>
 
             <div className="hero-feature-item">
               <div className="hero-feature-icon">
-                <Headphones size={28} strokeWidth={1.5} />
+                <Lock size={26} strokeWidth={1.5} />
               </div>
               <div>
-                <h2 className="hero-feature-title">Confidencialidad y rigor</h2>
+                <h2 className="hero-feature-title">Confidencialidad Boutique</h2>
                 <p className="hero-feature-desc">
-                  Equipo sénior en Bogotá a un mensaje de distancia, con 20 años de excelencia legal y valor humano.
+                  Atención directa de socios sénior en Bogotá con independencia ética y cero conflictos de interés.
                 </p>
               </div>
             </div>
@@ -439,7 +473,7 @@ export const App: React.FC = () => {
             <div className="pillars-bento-grid">
               <article className="glass-pillar-card">
                 <div className="glass-icon-ring">
-                  <Lightbulb size={24} strokeWidth={1.5} />
+                  <Cpu size={22} strokeWidth={1.6} />
                 </div>
                 <h3 className="card-headline-serif">Innovación continua</h3>
                 <p className="card-body-copy">
@@ -449,7 +483,7 @@ export const App: React.FC = () => {
 
               <article className="glass-pillar-card">
                 <div className="glass-icon-ring gold-ring">
-                  <Award size={24} strokeWidth={1.5} />
+                  <BookOpen size={22} strokeWidth={1.6} />
                 </div>
                 <h3 className="card-headline-serif">Excelencia legal</h3>
                 <p className="card-body-copy">
@@ -459,7 +493,7 @@ export const App: React.FC = () => {
 
               <article className="glass-pillar-card">
                 <div className="glass-icon-ring">
-                  <Users size={24} strokeWidth={1.5} />
+                  <Handshake size={22} strokeWidth={1.6} />
                 </div>
                 <h3 className="card-headline-serif">Atención personalizada</h3>
                 <p className="card-body-copy">
@@ -469,7 +503,7 @@ export const App: React.FC = () => {
 
               <article className="glass-pillar-card">
                 <div className="glass-icon-ring gold-ring">
-                  <HeartHandshake size={24} strokeWidth={1.5} />
+                  <ShieldCheck size={22} strokeWidth={1.6} />
                 </div>
                 <h3 className="card-headline-serif">Valor humano</h3>
                 <p className="card-body-copy">
@@ -504,7 +538,7 @@ export const App: React.FC = () => {
             <article className="service-showcase-card">
               <div className="service-card-top">
                 <div className="service-icon-capsule">
-                  <Globe size={24} strokeWidth={1.5} />
+                  <Compass size={22} strokeWidth={1.6} />
                 </div>
                 <span className="service-index-num">01</span>
               </div>
@@ -524,7 +558,7 @@ export const App: React.FC = () => {
               </ul>
               <a href="#contacto" className="btn-pill-card-action">
                 <span>Consultar área</span>
-                <ArrowRight size={14} />
+                <ArrowUpRight size={15} />
               </a>
             </article>
 
@@ -532,7 +566,7 @@ export const App: React.FC = () => {
             <article className="service-showcase-card">
               <div className="service-card-top">
                 <div className="service-icon-capsule">
-                  <Briefcase size={24} strokeWidth={1.5} />
+                  <Layers size={22} strokeWidth={1.6} />
                 </div>
                 <span className="service-index-num">02</span>
               </div>
@@ -552,7 +586,7 @@ export const App: React.FC = () => {
               </ul>
               <a href="#contacto" className="btn-pill-card-action">
                 <span>Consultar área</span>
-                <ArrowRight size={14} />
+                <ArrowUpRight size={15} />
               </a>
             </article>
 
@@ -560,7 +594,7 @@ export const App: React.FC = () => {
             <article className="service-showcase-card">
               <div className="service-card-top">
                 <div className="service-icon-capsule">
-                  <Scale size={24} strokeWidth={1.5} />
+                  <Scale size={22} strokeWidth={1.6} />
                 </div>
                 <span className="service-index-num">03</span>
               </div>
@@ -580,7 +614,7 @@ export const App: React.FC = () => {
               </ul>
               <a href="#contacto" className="btn-pill-card-action">
                 <span>Consultar área</span>
-                <ArrowRight size={14} />
+                <ArrowUpRight size={15} />
               </a>
             </article>
           </div>
@@ -593,7 +627,7 @@ export const App: React.FC = () => {
           <div className="section-header-editorial">
             <div className="eyebrow-pill">
               <span className="eyebrow-dot-circle">
-                <Users size={12} strokeWidth={2.2} />
+                <Landmark size={12} strokeWidth={2.2} />
               </span>
               <span>Liderazgo Sénior</span>
             </div>
@@ -692,7 +726,7 @@ export const App: React.FC = () => {
             <div>
               <div className="eyebrow-pill">
                 <span className="eyebrow-dot-circle">
-                  <Scale size={12} strokeWidth={2.2} />
+                  <Globe size={12} strokeWidth={2.2} />
                 </span>
                 <span>Casos de Éxito &amp; Track Record</span>
               </div>
@@ -786,15 +820,15 @@ export const App: React.FC = () => {
 
               <div className="contact-trust-seals">
                 <div className="trust-seal-chip">
-                  <Gavel size={15} strokeWidth={1.6} />
+                  <Handshake size={15} strokeWidth={1.6} />
                   <span>Atención Personalizada</span>
                 </div>
                 <div className="trust-seal-chip">
-                  <WandSparkles size={15} strokeWidth={1.6} />
+                  <Cpu size={15} strokeWidth={1.6} />
                   <span>Análisis LegalTech</span>
                 </div>
                 <div className="trust-seal-chip">
-                  <Headphones size={15} strokeWidth={1.6} />
+                  <Lock size={15} strokeWidth={1.6} />
                   <span>Confidencialidad Total</span>
                 </div>
               </div>
